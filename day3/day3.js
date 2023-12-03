@@ -52,45 +52,37 @@ let day3a=function(input){
     for(let n=0;n<N;n++){
         for(let m=0;m<M;m++){
             let ch=input[n*(M+1)+m];
-            if(parsemode==0){
-                if(charNumberQ(ch)){
-                    number=ch.charCodeAt(0)-48;
-                    let adj=[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1]];
-                    let symbolflag=adj.map((pair)=>(handleSymbolCheck(m+pair[0],n+pair[1]))).reduce((a,b)=>a||b,false);
-                    //If a symbol was found, set parse mode to 2. else 1.
-                    if(symbolflag)
-                        parsemode=2;
-                    else
-                        parsemode=1;
+
+            let chq=charNumberQ(ch);
+            //If we're not on a number and we're not in the process of parsing a num, next.
+            if(parsemode==0 && !chq)
+                continue;
+
+            //If we're on a number, append its digit
+            if(chq){
+                number=number*10;
+                number+=ch.charCodeAt(0)-48;
+            }
+            let adj;
+            if(parsemode==0 && chq) {
+                adj=[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1]]; 
+                parsemode=1;
+            } else if(parsemode>0 && chq)
+                adj=[[0,-1],[0,1]];
+            else 
+                adj=[[0,-1],[0,0],[0,1]];
+            let symbolflag=adj.map((pair)=>(handleSymbolCheck(m+pair[0],n+pair[1]))).reduce((a,b)=>a||b,false);
+            if(symbolflag && parsemode==1)
+                parsemode=2;
+
+            //handle end of number (we've detected a non-number or EOL)
+            if(!chq || m==M-1){
+                if(parsemode==2){
+                    //if we detected a number and symbol, add it to the sum.
+                    retsum+=number;
                 }
-            } else {
-                //parsemode was already 1 or 2.
-                //If we find a number, add it to the current 3 digit number parse.
-                if(charNumberQ(ch)){
-                    number=number*10;
-                    number+=ch.charCodeAt(0)-48;
-                }
-                //still have to deal with parsing logic:
-                if(charNumberQ(ch)){
-                    let adj=[[0,-1],[0,1]];
-                    let symbolflag=adj.map((pair)=>(handleSymbolCheck(m+pair[0],n+pair[1]))).reduce((a,b)=>a||b,false);
-                    if(symbolflag)
-                        parsemode=2;
-                } else {
-                    let adj=[[0,-1],[0,0],[0,1]];
-                    let symbolflag=adj.map((pair)=>(handleSymbolCheck(m+pair[0],n+pair[1]))).reduce((a,b)=>a||b,false);
-                    if(symbolflag){
-                        parsemode=2;
-                    }
-                }
-                if((!charNumberQ(ch))||m==M-1){
-                    //parser wrap up:
-                    if(parsemode===2){
-                        retsum+=number;
-                        number=0;
-                    }
-                    parsemode=0;
-                }
+                number=0;
+                parsemode=0;
             }
         }
     }
