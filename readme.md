@@ -5,6 +5,7 @@ Keep in mind this is "code the first thing you think of as fast as possible" cod
 ```
       --------Part 1--------   --------Part 2--------
 Day       Time   Rank  Score       Time   Rank  Score
+ 10   00:29:37   1318      0   01:10:17    947      0
   9   00:25:14   4978      0   00:29:58   4481      0
   8   01:54:19  15209      0   02:28:45  10136      0 :(
   7   00:34:20   3220      0   01:06:50   4386      0
