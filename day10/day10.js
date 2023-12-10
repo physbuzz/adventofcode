@@ -16,12 +16,13 @@ let First=arr=>arr[0];
 let day10a=function(input){
     console.log("=========== day 10 part 1 ==========");
     lines=input.split('\n');
-    let seqs=[];
-    
-
+    //# of characters per line (141 in real examples, including \n)
     let LINESIZE=lines[0].length+1;
-    let m={};
 
+    //Build a map m so that "if we're on a character | and we came from
+    //direction [0,1], move in direction [0,-1]". This is represented by
+    //m["|"+[0,1]]=[0,-1]
+    let m={};
     let atlas=[["|",[0,1],[0,-1]],["-",[1,0],[-1,0]],
         ["F",[1,0],[0,1]],["7",[-1,0],[0,1]],
         ["L",[1,0],[0,-1]],["J",[-1,0],[0,-1]]];
@@ -29,85 +30,34 @@ let day10a=function(input){
         m[l[0]+l[1]]=l[2];
         m[l[0]+l[2]]=l[1];
     }
-    // index, directionFrom
+
+    // argument is of the form [index, directionFrom]
     let stepIndex=function(arg){
         let ch=input[arg[0]];
-        if(ch=='S' || ch=='.'){
-            console.log("Error! stepIndex called on "+ch);
-        }
+        if(ch=='S')
+            return false; //loop complete.
         let newDirection=m[ch+arg[1]];
         return [arg[0]+LINESIZE*newDirection[1]+newDirection[0],
             [-newDirection[0],-newDirection[1]]];
     }
 
-    /*
-    m["|"+[0,1]]=[0,-1]; // meaning if it's a pipe and we're coming from above, go to the bottom. 
-    m["|"+[0,-1]]=[0,1];
-
-    m["-"+[1,0]]=[-1,0];
-    m["-"+[-1,0]]=[1,0];
-
-    kkkkkkk
-    |-LJ7F.S*/
-
-
-
     let i=input.search(/S/);
-    //let y=Math.floor(i/LINESIZE);
-    //let x=i-n*LINESIZE;
+    //Find initial cursor position. My example happens to look like
+    //"-S", so I put this in manually. It would change for your input.
+    let cursor=[i-1,[1,0]];
 
-    //I happen to know S looks like 
-    //-7
-    //-S
-    let cursor1=[i-1,[1,0]];
-    let cursor2=[i-LINESIZE,[0,1]];
-    let counter=[];
-    counter[cursor1[0]]=1;
-    counter[cursor2[0]]=1;
     let step=1;
-    while(true){
-        cursor1=stepIndex(cursor1);
-        cursor2=stepIndex(cursor2);
-        if(counter[cursor1[0]] || counter[cursor2[0]])
-            break;
+    while((cursor=stepIndex(cursor)))
         step++;
-        counter[cursor1[0]]=step;
-        counter[cursor2[0]]=step;
-    }
-    console.log(step);
-
-    
-
-    /*
-    console.log(lines[n-1]);
-    console.log(lines[n]);
-    console.log(lines[n+1]);
-    console.log("|"+[0,1]);*/
-        /*
-    let tot=0;
-    for(let i in lines){
-        let line=lines[i].trim();
-        if(line.length==0)
-            continue;
-
-        seqs[i]=line.split(' ').map(x=>+x);
-        let arrs=[seqs[i]];
-        for(let lvl=1;Last(arrs[lvl-1])!=0;lvl++)
-            arrs[lvl]=Differences(arrs[lvl-1]);
-        tot+=Sum(arrs.map(Last));
-    }
-    console.log(tot);*/
+    console.log(step/2);
 };
 
 let day10b=function(input){
-    console.log("=========== day 10 part b ==========");
+    console.log("=========== day 10 part 2 ==========");
     lines=input.split('\n');
-    let seqs=[];
-    
-
     let LINESIZE=lines[0].length+1;
-    let m={};
 
+    let m={};
     let atlas=[["|",[0,1],[0,-1]],["-",[1,0],[-1,0]],
         ["F",[1,0],[0,1]],["7",[-1,0],[0,1]],
         ["L",[1,0],[0,-1]],["J",[-1,0],[0,-1]]];
@@ -115,77 +65,30 @@ let day10b=function(input){
         m[l[0]+l[1]]=l[2];
         m[l[0]+l[2]]=l[1];
     }
-    // index, directionFrom
+
     let stepIndex=function(arg){
         let ch=input[arg[0]];
-        if(ch=='S'){
-            return false;
-        }
+        if(ch=='S')
+            return false; //loop complete.
         let newDirection=m[ch+arg[1]];
         return [arg[0]+LINESIZE*newDirection[1]+newDirection[0],
             [-newDirection[0],-newDirection[1]]];
     }
 
-    /*
-    m["|"+[0,1]]=[0,-1]; // meaning if it's a pipe and we're coming from above, go to the bottom. 
-    m["|"+[0,-1]]=[0,1];
-
-    m["-"+[1,0]]=[-1,0];
-    m["-"+[-1,0]]=[1,0];
-
-    kkkkkkk
-    |-LJ7F.S*/
-
-
-
     let i=input.search(/S/);
-    //let y=Math.floor(i/LINESIZE);
-    //let x=i-n*LINESIZE;
-
-    //I happen to know S looks like 
-    //-7
-    //-S
-    let cursor=[i-1,[1,0]];
-    let counter=[];
-
     let y=Math.floor(i/LINESIZE);
-    let x=i-y*LINESIZE-1;
+    //again this only works for -S. If the start was SJ or S- or S7 I'd have
+    //cursor=[i+1,[-1,0]]
+    let cursor=[i-1,[1,0]];
 
-    let area=x*0; //x dy
-    let nstep=1;
-    let newcursor=stepIndex(cursor);
-
-    console.log("x "+x+" y "+y); 
-
-    while(newcursor!==false){
-        let ynew=Math.floor(newcursor[0]/LINESIZE);
-        let xnew=newcursor[0]-ynew*LINESIZE;
-        area+=x*(ynew-y);
-        nstep++;
-
-        x=xnew;
-        y=ynew;
-        cursor=newcursor;
-        newcursor=stepIndex(cursor);
+    let area=y*cursor[1][0]; //y*dx
+    let step=1;
+    while((cursor=stepIndex(cursor))){
+        step++;
+        area+=Math.floor(cursor[0]/LINESIZE)*cursor[1][0];
     }
-    console.log("x "+x+" y "+y); 
-    console.log(Math.floor(i/LINESIZE)-Math.floor(cursor[0]/LINESIZE)); 
-    area+=(i-Math.floor(i/LINESIZE)*LINESIZE)*(Math.floor(i/LINESIZE)-Math.floor(cursor[0]/LINESIZE));
-    console.log(Math.abs(area)-nstep/2+1);
-
+    console.log(Math.abs(area)-step/2+1);
 };
 
-if(typeof testinput!=='undefined'){
-    console.log("Test Input");
-    if(typeof day10a!=='undefined')
-        day10a(testinput);
-    if(typeof day10b!=='undefined')
-        day10b(testinput);
-}
-if(typeof input!=='undefined'){
-    console.log("Real Input");
-    if(typeof day10a!=='undefined')
-        day10a(input);
-    if(typeof day10b!=='undefined')
-        day10b(input);
-}
+day10a(input);
+day10b(input);
