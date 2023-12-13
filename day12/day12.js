@@ -92,125 +92,15 @@ let day12a=function(input){
     console.log(ret);
 };
 
-//This works and is faster than day12a, but not fast enough.
-let day12bSave=function(input){
-    console.log("=========== day 12 part 2 ==========");
-    lines=input.split('\n');
-
-    //.#?#???????.????# 1,2,3,2,1
-    
-    let numValid=function(str,grps,state) {
-        if(typeof state =='undefined'){
-            state={i:0,j:0,checkinggroup:false,grp:[...grps]};
-        }
-        let tot=state.grp.reduce((a,b)=>a+b+(b>0?1:0),0);
-        if(str.length-state.i+1<tot){
-            return 0;
-        }
-        for(;state.i<str.length;state.i++){
-            if(str[state.i]=='?'){
-                let copy1={i:state.i,j:state.j,checkinggroup:state.checkinggroup,grp:[...state.grp]};
-                let copy2={i:state.i,j:state.j,checkinggroup:state.checkinggroup,grp:[...state.grp]};
-                return numValid(str.slice(0,state.i)+"."+str.slice(state.i+1),grps,copy1)+
-                        numValid(str.slice(0,state.i)+"#"+str.slice(state.i+1),grps,copy2);
-            }
-            if(str[state.i]!='.'&&str[state.i]!='#'){
-                console.log("Error, ran into non . # character in checkValid: "+str[state.i]);
-                return 0;
-            }
-
-            if(!state.checkinggroup){
-                if(str[state.i]==".")
-                    continue;
-                else if(str[state.i]=="#"){
-                    if(state.j>=grps.length)
-                        return 0;
-                    state.checkinggroup=true;
-                    state.grp[state.j]--;
-                }
-            } else {
-                if(str[state.i]=='.'){
-                    if(state.grp[state.j]!=0)
-                        return 0;
-                    state.j++;
-                    state.checkinggroup=false;
-                } else {
-                    state.grp[state.j]--;
-                    if(state.grp[state.j]<0)
-                        return 0;
-                }
-            }
-        }
-        if(state.checkinggroup){
-            if(state.grp[state.j]==0 && state.j==grps.length-1)
-                return 1;
-        }
-
-        if(state.grp[state.j-1]==0 && state.j==grps.length)
-            return 1;
-
-        return 0;
-    };
-    /*let numValid=function(str,checklist,index){
-        if(index>=str.length){
-            return checkValid(str,checklist)?1:0;
-        }
-        if(str[index]=='?'){
-            return numValid(str.slice(0,index)+"."+str.slice(index+1),checklist,index+1)+
-             numValid(str.slice(0,index)+"#"+str.slice(index+1),checklist,index+1);
-        }
-        return numValid(str,checklist,index+1);
-    };*/
-
-    //let strs=[];
-    //let groupnums=[];
-        let ret=0;
-    for(let n in lines){
-        let line=lines[n].trim();
-        if(line.length==0)
-            continue;
-        line=line.split(' ');
-        let str=line[0];
-        let grps=line[1].trim().split(',').map(x=>+x);
-        let grpnum=grps;
-        for(let i=0;i<4;i++){
-            str=str+"?"+line[0];
-            grpnum=grpnum.concat(grps);
-        }
-
-        console.log(n);
-        //if(n<9){
-            ret+=numValid(str,grpnum);
-            //console.log(str);
-            //console.log(grpnum);
-        //}
-    }
-    console.log(ret);
-};
-
 let day12b=function(input){
     console.log("=========== day 12 part 2 ==========");
     lines=input.split('\n');
 
-    //.#?#???????.????# 1,2,3,2,1
-
-    let CACHENUM=15;
-
-    //View it as grps.length fermions, some of which are distinguishable,
-    //occupying str.length-grps.sum()+1 energy states. For example, in
-    //#.#.#..., str.length=8, grps.sum()=3, and there are 6 places we 
-    //can put the 3 # particles. So there's (6 choose 3) = 20 states.
-    //
-    /* State has positions of the groups
-     * 0<= state.s[0]+grps[0]<state.s[1]+grps[1]<...state.s[grps.length-1]+grps[grps.length-1] <=str.length
+    /* Return [left,right] if we can match the pattern .###.
+     * where there are num #'s surrounded by dots, instead of 3.
+     * left is the index of the leftmost dot. right is the index of 
+     * the rightmost dot +1. (So, str.slice(left,right) would give the whole pattern)
      * */
-    /*
-        for(state.s[0]=0;state.s[0]<str.length-grps.reduce((a,b)=>a+b+1,0);state.s[0]++){
-            for(state.s[1]=state.s[0]+grps[0]+1;
-                state.s[1]<str.length-grps.reduce((a,b)=>a+b+1,0);state.s[0]++){
-
-            }
-        }*/
     let contiguousPoundQ=function(str,index,num){
         let ret=true;
         let left=index;
@@ -242,9 +132,9 @@ let day12b=function(input){
     };
     let numValid=function(str,grps) {
         //console.log("Checking str = "+str+" grps = "+grps);
+        
         //Base cases: grps.length==1
         //str.length==0
-        
         if(str.length==0 && grps.length==0)
             return 1;
         if(grps.length==0){
@@ -254,12 +144,15 @@ let day12b=function(input){
             }
             return 1;
         }
+        //Base case with only one group.
         if(grps.length==1){
             let retsum=0;
             for(let i=0;i<str.length-grps[0]+1;i++){
                 let pret=contiguousPoundQ(str,i,grps[0]);
                 if(pret!==false){
                     let check2=true;
+                    //I've checked that I match grps[0], but we need the match to be exact.
+                    //ie. there are no other #'s. So we check to the left of pret[0] and right of pret[1].
                     for(let j=0;j<pret[0];j++){
                         check2=check2&&(str[j]!='#');
                     }
@@ -273,6 +166,8 @@ let day12b=function(input){
             return retsum;
         }
 
+        //Base cases checked. Let's do all recursion cases.
+        //The strategy is to fix grps[middlej] and find all patterns that match to the left and right.
         let middlej=Math.floor(grps.length/2);
 
         let leftmostgroups=grps.slice(0,middlej);
@@ -322,5 +217,5 @@ let day12b=function(input){
 };
 
 
-//day12a(input);
+day12a(input);
 day12b(input);
