@@ -91,15 +91,6 @@ let day13b2=function(input){
     let blocks=[];
 
     //deep compare 1d arrays
-    let arrEquals=function(arr1,arr2){
-        if(arr1.length!==arr2.length)
-            return false;
-        for(let i=0;i<arr1.length;i++){
-            if(arr1[i]!==arr2[i])
-                return false;
-        }
-        return true;
-    };
     let findReflectionRowMismatches=function(block,row){
         let ret=[];
         for(let i=0;i<=row;i++){
@@ -127,6 +118,15 @@ let day13b2=function(input){
         }
         return ret;
     };
+    let arrEquals=function(arr1,arr2){
+        if(arr1.length!==arr2.length)
+            return false;
+        for(let i=0;i<arr1.length;i++){
+            if(arr1[i]!==arr2[i])
+                return false;
+        }
+        return true;
+    };
     let colEquals=function(block,i1,i2){
         for(let j=0;j<block.length;j++){
             if(block[j][i1]!==block[j][i2])
@@ -144,38 +144,7 @@ let day13b2=function(input){
         }
         return true;
     };
-    let findReflectionRow=function(block){
-        for(let r=0;r<block.length-1;r++){
-            if(isReflectionRow(block,r)){
-                return r;
-                //console.log("Row "+r+" is reflection row");
-            }
-        }
-        return -1;
-    };
-    let findReflectionCol=function(block){
-        for(let c=0;c<block.length-1;c++){
-            if(isReflectionCol(block,c)){
-                return c;
-            }
-        }
-        return -1;
-    };
-    let flip=function(symbol){
-        if(symbol=='.')
-            return '#';
-        else if(symbol=='#')
-            return '.';
-        console.log("Error, non #. passed to flip function");
-    };
     let isReflectionRow=function(block,row){
-        //reflection line between row and row+1
-        //row gets sent to row+1
-        //row-1 gets sent to row+2
-        //row-j gets sent to row+j+1
-        //i=row-j gets sent to row+(row-i)+1
-        //so the check is block[i]==block[2*row-i+1]
-        //Watch out, this will return true if row=arr.length-1
         for(let i=0;i<=row;i++){
             let iprime=2*row-i+1;
             if(iprime>=block.length || iprime<0)
@@ -203,26 +172,6 @@ let day13b2=function(input){
         for(let c=0;c<block[0].length-1;c++){
             if(isReflectionCol(block,c)){
                 ret.push(c);
-            }
-        }
-        return ret;
-    };
-    let flipBlock=function(block,i,j){
-        let blockcopy=block.map((x)=>[...x]);
-        blockcopy[i][j]=flip(blockcopy[i][j]);
-        return blockcopy;
-    };
-    let scoreBlock=function(block){
-        let ret=0;
-        for(let r=0;r<block.length-1;r++){
-            if(isReflectionRow(block,r)){
-                ret+=(r+1)*100;
-            }
-        }
-
-        for(let c=0;c<block[0].length-1;c++){
-            if(isReflectionCol(block,c)){
-                ret+=(c+1)*1;
             }
         }
         return ret;
