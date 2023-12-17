@@ -56,24 +56,6 @@ let day17a=function(input){
         return retlist.filter((el)=>inBounds(el[0],el[1]));
     };
 
-    /*
-    dist.prettyPrint=function(){
-        let o=[];
-        for(let j=0;j<n;j++){
-            o[j]="";
-            for(let i=0;i<n;i++){
-                let c=dist[j*n+i];
-                if(c==undefined)
-                    o[j]+=".".padStart(3," ");
-                else
-                    o[j]+=(""+dist[j*n+i]).padStart(3," ");
-            }
-        }
-        console.log(o.join('\n'));
-    };*/
-
-
-
     let explored=[];
     for(let i=0;i<I;i++){
         explored[i]=[];
