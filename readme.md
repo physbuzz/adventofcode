@@ -1,6 +1,25 @@
-Advent of Code! 
-Keep in mind this is "code the first thing you think of as fast as possible" coding.
+Advent of Code!
 
+I try to leave the first commit unedited / unpolished so you can see the awful solutions I come up with :)
+
+## 2024
+
+```
+      -------Part 1--------   --------Part 2--------
+Day       Time  Rank  Score       Time   Rank  Score
+ 10   00:18:07  2649      0   00:19:48   2078      0
+  9   00:20:52  2122      0   00:53:03   2068      0
+  8   00:21:12  2725      0   00:29:21   2519      0
+  7   00:10:21  1533      0   00:14:06   1298      0
+  6   00:10:01  1164      0   00:19:10    668      0
+  5   00:36:39  7659      0   02:07:29  12285      0
+  4   00:08:12  1209      0   00:13:09    716      0
+  3   00:19:57  8142      0   00:28:07   5613      0
+  2   00:10:36  2989      0   00:15:39   1923      0
+  1   00:07:53  3452      0   00:13:03   3687      0
+```
+
+## 2023
 
 ```
       --------Part 1--------   --------Part 2--------
