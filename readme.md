@@ -7,6 +7,9 @@ I try to leave the first commit unedited / unpolished so you can see the awful s
 ```
       -------Part 1--------   --------Part 2--------
 Day       Time  Rank  Score       Time   Rank  Score
+ 13   00:14:58  1267      0   00:15:42    250      0
+ 12   00:16:06  1517      0   00:52:32   1586      0
+ 11   00:09:28  2098      0   00:18:49   1242      0
  10   00:18:07  2649      0   00:19:48   2078      0
   9   00:20:52  2122      0   00:53:03   2068      0
   8   00:21:12  2725      0   00:29:21   2519      0
