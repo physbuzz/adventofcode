@@ -1,0 +1,55 @@
+
+let day14b=function(input){
+    console.log("=========== day 14 part 2 ==========");
+    lines=input.split('\n').map( x => x.trim()).filter(line => line.length>0);
+    let ret=0;
+    let N=103;
+    let M=101;
+    //let N=7;
+    //let M=11;
+
+    let telapsed=1;
+    let done=false;
+    let grid=Array(N).fill().map(x=>Array(M).fill(0));
+    let pxl=[], pyl=[], vxl=[], vyl=[];
+    for(let i=0;i<lines.length;i++){
+        let [str1,str2]=lines[i].split(' ');
+        [pxl[i],pyl[i]]=str1.match(/\d+/g).map(x => +x);
+        [vxl[i],vyl[i]]=str2.substr(2).split(',').map(x => +x);
+        //let x=mymod(px+vx*telapsed,M);
+        //let y=mymod(py+vy*telapsed,N);
+        //grid[y][x]+=1;
+    }
+    while(!done){
+        grid=Array(N).fill().map(x=>Array(M).fill(0));
+        let mymod=function(x,m){
+            return (x%m>=0)?(x%m):(x%m)+m;
+        };
+
+        let q1=0,q2=0,q3=0,q4=0;
+        for(let i=0;i<pxl.length;i++){
+            let x=mymod(pxl[i]+vxl[i]*telapsed,M);
+            let y=mymod(pyl[i]+vyl[i]*telapsed,N);
+            grid[y][x]+=1;
+        }
+        let mirrored=true;
+        for(let a=0;a<N;a++){
+            for(let b=0;b<M/2;b++){
+                if(grid[a][b]!=grid[a][M-b-1])
+                    mirrored=false;
+            }
+        }
+        if(mirrored)
+            done=true;
+        else
+            telapsed++;
+        
+    if(telapsed%1000===0)
+        console.log(telapsed);
+
+    }
+    for(let i=0;i<N;i++){
+        console.log(grid[i].join(" "));
+    }
+    console.log(telapsed);
+};
